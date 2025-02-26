@@ -5,7 +5,6 @@ import { fetchComments } from "../services/ytService";
 const router = express.Router();
 
 router.post("/analyze", async (req: Request, res: Response) => {
-
   try {
     const { url } = req.body;
     const videoId = url.split("v=")[1]; // Extract video ID from URL
