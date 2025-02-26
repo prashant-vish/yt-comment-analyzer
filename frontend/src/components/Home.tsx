@@ -15,6 +15,7 @@ const Home: React.FC<HomePageProps> = ({ setSentimentData }) => {
     setError("");
 
     try {
+      console.log("URL:", url);
       const response = await axios("http://localhost:3000/api/analyze", {
         method: "POST",
         headers: {
@@ -22,10 +23,18 @@ const Home: React.FC<HomePageProps> = ({ setSentimentData }) => {
         },
         data: JSON.stringify({ url }),
       });
+      console.log("Response:", response);
 
       const data = await response.data;
+
+      console.log("Data:", data.comments);
+
       setSentimentData(data);
-      navigate("/dashboard");
+      console.log("Sentiment Data:", setSentimentData);
+      
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
