@@ -20,7 +20,7 @@ router.post("/analyze", async (req: Request, res: Response) => {
 
     // 3. Generate insights
     const analysis = generateInsights(videoId, analyzedComment);
-
+    
     res.json({
       message: "Video ID extracted successfully",
       commentsData,
