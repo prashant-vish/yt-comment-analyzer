@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 function App() {
   const [sentimentData, setSentimentData] = useState<any[]>([]);
 
-  
   return (
     <>
       <BrowserRouter>
@@ -16,7 +15,10 @@ function App() {
             path="/"
             element={<HomePage setSentimentData={setSentimentData} />}
           />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={<Dashboard sentimentData={sentimentData} />}
+          />
         </Routes>
       </BrowserRouter>
     </>

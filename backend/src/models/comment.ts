@@ -1,25 +1,27 @@
-// models/Analysis.ts
 import mongoose, { Schema, Document } from "mongoose";
-import { VideoAnalysis } from "../types";
+import { AnalyzedComment } from "../types";
 
-export interface AnalysisDocument extends VideoAnalysis, Document {}
+// Create a modified type that omits 'id' to avoid conflict with Mongoose's Document
+export interface CommentDocument
+  extends Omit<AnalyzedComment, "id">,
+    Document {}
 
-const AnalysisSchema: Schema = new Schema({
-  videoId: { type: String, required: true, unique: true },
-  commentCount: { type: Number, required: true },
-  sentimentBreakdown: {
-    agree: { type: Number, required: true },
-    disagree: { type: Number, required: true },
-    neutral: { type: Number, required: true }
+const CommentSchema: Schema = new Schema(
+  {
+    commentId: { type: String, required: true, unique: true }, // Rename to commentId
+    videoId: { type: String, required: true, index: true },
+    text: { type: String, required: true },
+    authorDisplayName: { type: String, required: true },
+    publishedAt: { type: Date, required: true },
+    likeCount: { type: Number, default: 0 },
+    sentiment: {
+      type: String,
+      enum: ["agree", "disagree", "neutral"],
+      required: true,
+    },
+    score: { type: Number },
   },
-  keywords: [
-    {
-      word: { type: String, required: true },
-      count: { type: Number, required: true }
-    }
-  ],
-  monthlyDistribution: { type: Object, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+  { timestamps: true }
+);
 
-export default mongoose.model<AnalysisDocument>("Analysis", AnalysisSchema);
+export default mongoose.model<CommentDocument>("Comment", CommentSchema);

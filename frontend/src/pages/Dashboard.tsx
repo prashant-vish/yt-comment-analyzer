@@ -2,9 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
-const Dashboard = () => {
-  // Sample data based on the image
-  const sentimentData = [
+type DashboardProps = {
+  sentimentData: any[]; // Replace `any[]` with the correct type
+};
+
+const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
+  console.log("sentimentData", sentimentData);
+
+  const allSentimentData = [
     { label: "Agree", value: 62.9, color: "bg-green-500" },
     { label: "Disagree", value: 17.1, color: "bg-red-500" },
     { label: "Neutral", value: 20, color: "bg-blue-500" },
@@ -71,7 +76,7 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {sentimentData.map((item) => (
+              {allSentimentData.map((item) => (
                 <div key={item.label} className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">{item.label}</span>
