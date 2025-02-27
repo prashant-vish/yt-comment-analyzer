@@ -27,11 +27,11 @@ const Home: React.FC<HomePageProps> = ({ setSentimentData }) => {
 
       const data = await response.data;
 
-      console.log("Data:", data.comments);
+      console.log("Data:", data);
 
       setSentimentData(data);
-      console.log("Sentiment Data:", setSentimentData);
-      
+      // console.log("Sentiment Data:", setSentimentData);
+
       setTimeout(() => {
         navigate("/dashboard");
       }, 2000);

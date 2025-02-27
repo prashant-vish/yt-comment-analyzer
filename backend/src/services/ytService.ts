@@ -15,6 +15,14 @@ function maskName(name: string): string {
   return name[0] + "*".repeat(name.length - 2) + name[name.length - 1];
 }
 
+function textWithOutHTML(textWithHTML: string): string {
+  const textWithoutHtml = textWithHTML.replace(/<\/?[^>]+(>|$)/g, "");
+
+  // Remove timestamps
+  const text = textWithoutHtml.replace(/^\d{1,2}:\d{2}(?::\d{2})?\s*/, "");
+  return text;
+}
+
 export async function fetchComments(videoId: string): Promise<Comment[]> {
   let comments: Comment[] = [];
   let nextPageToken: string | null = null;
@@ -23,44 +31,60 @@ export async function fetchComments(videoId: string): Promise<Comment[]> {
       const response: any = await axios.get(BASE_URL, {
         params: {
           key: YOUTUBE_API_KEY,
-          part: "snippet",
+          part: "snippet,replies", // Added "replies"
           videoId: videoId,
-          maxResults: 100, // Maximum limit per request
+          maxResults: 100,
           pageToken: nextPageToken,
         },
       });
 
       if (response.data.items) {
         response.data.items.forEach((item: any) => {
-          const commentWithHtml =
-            item.snippet.topLevelComment.snippet.textDisplay;
-          // Remove HTML tags
-          const commentWithoutHtml = commentWithHtml.replace(
-            /<\/?[^>]+(>|$)/g,
-            ""
-          );
-          // Remove timestamps (matches formats like 00:45, 1:23, 2:15:30)
-          const comment = commentWithoutHtml.replace(
-            /^\d{1,2}:\d{2}(?::\d{2})?\s*/,
-            ""
-          );
+          // Process top-level comment
+          const topLevelComment = item.snippet.topLevelComment;
+          const commentWithHtml = topLevelComment.snippet.textDisplay;
 
-          const authorName =
-            item.snippet.topLevelComment.snippet.authorDisplayName;
+          const comment = textWithOutHTML(commentWithHtml);
+
+          const authorName = topLevelComment.snippet.authorDisplayName;
           const author = maskName(authorName);
 
-
+          // Add top-level comment
           comments.push({
-            id: item.id,
+            id: topLevelComment.id, // Correct ID for the comment
             text: comment,
             authorDisplayName: author,
-            publishedAt: item.snippet.topLevelComment.snippet.publishedAt,
-            likeCount: item.snippet.topLevelComment.snippet.likeCount,
+            publishedAt: topLevelComment.snippet.publishedAt,
+            likeCount: topLevelComment.snippet.likeCount,
+            isReply: false,
+            parentId: null, // No parent for top-level comments
           });
+
+          // Process replies if they exist
+          if (item.replies && item.replies.comments) {
+            item.replies.comments.forEach((reply: any) => {
+              const replyWithHtml = reply.snippet.textDisplay;
+              const replyText = textWithOutHTML(replyWithHtml);
+
+              const replyAuthorName = reply.snippet.authorDisplayName;
+              const replyAuthor = maskName(replyAuthorName);
+
+              // Add reply comment
+              comments.push({
+                id: reply.id, // Reply comment ID
+                text: replyText,
+                authorDisplayName: replyAuthor,
+                publishedAt: reply.snippet.publishedAt,
+                likeCount: reply.snippet.likeCount,
+                isReply: true,
+                parentId: topLevelComment.id, // Link to parent comment
+              });
+            });
+          }
         });
       }
 
-      nextPageToken = response.data.nextPageToken || null; // Update nextPageToken
+      nextPageToken = response.data.nextPageToken || null;
     } while (nextPageToken);
 
     console.log(`Total comments fetched: ${comments.length}`);
@@ -74,4 +98,3 @@ export async function fetchComments(videoId: string): Promise<Comment[]> {
     return [];
   }
 }
-

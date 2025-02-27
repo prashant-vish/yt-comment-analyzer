@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 function App() {
   const [sentimentData, setSentimentData] = useState<any[]>([]);
 
+  
   return (
     <>
       <BrowserRouter>

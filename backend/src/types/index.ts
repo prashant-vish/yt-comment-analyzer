@@ -4,6 +4,8 @@ export interface Comment {
   authorDisplayName: string;
   publishedAt: Date;
   likeCount: number;
+  isReply?: boolean;
+  parentId?: string | null;
 }
 
 export interface AnalyzedComment extends Comment {
@@ -13,7 +15,6 @@ export interface AnalyzedComment extends Comment {
 
 export interface VideoAnalysis {
   videoId: string;
-  title: string;
   commentCount: number;
   sentimentBreakdown: {
     agree: number;
