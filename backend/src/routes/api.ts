@@ -25,8 +25,8 @@ router.post("/analyze", async (req: Request, res: Response): Promise<any> => {
     let commentsData = await fetchComments(videoId);
 
     if (commentsData.length === 0) {
-      return res.status(400).send({
-        error: "No comments found for this video",
+      return res.status(200).send({
+        message: "No comments found for this video",
       });
     }
 

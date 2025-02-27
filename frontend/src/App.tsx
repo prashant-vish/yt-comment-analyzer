@@ -4,8 +4,33 @@ import Dashboard from "./pages/Dashboard.tsx";
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+export type DashboardProps = {
+  sentimentData: {
+    message: string;
+    analysis?: {
+      videoId: string;
+      commentCount: number;
+      sentimentBreakdown: {
+        agree: number;
+        disagree: number;
+        neutral: number;
+      };
+      keywords: {
+        word: string;
+        count: number;
+      }[];
+      monthlyDistribution: {
+        month: string;
+        count: number;
+      }[];
+      createdAt: Date;
+    };
+    error?: string;
+  }; // Replace `any[]` with the correct type
+};
+
 function App() {
-  const [sentimentData, setSentimentData] = useState<any[]>([]);
+  const [sentimentData, setSentimentData] = useState<any>();
 
   return (
     <>

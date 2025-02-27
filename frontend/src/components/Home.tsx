@@ -31,10 +31,7 @@ const Home: React.FC<HomePageProps> = ({ setSentimentData }) => {
 
       setSentimentData(data);
       // console.log("Sentiment Data:", setSentimentData);
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
+      navigate("/dashboard");
     } catch (err: any) {
       setError(
         err.response?.data?.message ||

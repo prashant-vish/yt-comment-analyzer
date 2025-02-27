@@ -1,27 +1,41 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-
-type DashboardProps = {
-  sentimentData: any[]; // Replace `any[]` with the correct type
-};
+import { DashboardProps } from "@/App";
 
 const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
-  console.log("sentimentData", sentimentData);
+  console.log("sentimentData:", sentimentData);
 
-  const allSentimentData = [
-    { label: "Agree", value: 62.9, color: "bg-green-500" },
-    { label: "Disagree", value: 17.1, color: "bg-red-500" },
-    { label: "Neutral", value: 20, color: "bg-blue-500" },
-  ];
+  const analysis = sentimentData.analysis;
+  console.log("Analysis:", analysis);
 
   const commentStats = {
-    total: 1035,
-    agree: 456,
-    disagree: 234,
-    neutral: 345,
+    total: analysis?.commentCount || 0,
+    agree: analysis?.sentimentBreakdown.agree || 0,
+    disagree: analysis?.sentimentBreakdown.disagree || 0,
+    neutral: analysis?.sentimentBreakdown.neutral || 0,
   };
+  const agreePercentage = (commentStats.agree / commentStats.total) * 100;
+  const disagreePercentage = (commentStats.disagree / commentStats.total) * 100;
+  const neutralPercentage = (commentStats.neutral / commentStats.total) * 100;
 
+  const allSentimentData = [
+    {
+      label: "Agree",
+      value: parseFloat(agreePercentage.toFixed(2)),
+      color: "bg-green-500",
+    },
+    {
+      label: "Disagree",
+      value: parseFloat(disagreePercentage.toFixed(2)),
+      color: "bg-red-500",
+    },
+    {
+      label: "Neutral",
+      value: parseFloat(neutralPercentage.toFixed(2)),
+      color: "bg-blue-500",
+    },
+  ];
   const monthlyData = [
     { month: "Jan", count: 120 },
     { month: "Feb", count: 150 },
@@ -29,16 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
     { month: "Apr", count: 180 },
   ];
 
-  const keywords = [
-    { word: "awesome", count: 45 },
-    { word: "great", count: 38 },
-    { word: "interesting", count: 32 },
-    { word: "thanks", count: 28 },
-    { word: "helpful", count: 25 },
-    { word: "amazing", count: 22 },
-    { word: "perfect", count: 20 },
-    { word: "good", count: 18 },
-  ];
+  const keywords = analysis?.keywords || [];
 
   // Calculate max value for chart scaling
   const maxMonthlyCount = Math.max(...monthlyData.map((item) => item.count));
@@ -79,13 +84,15 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
               {allSentimentData.map((item) => (
                 <div key={item.label} className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-400">{item.label}</span>
+                    <span className="text-gray-200">{item.label}</span>
                     <span className="text-white">{item.value}%</span>
                   </div>
-                  <Progress
-                    value={item.value}
-                    className={`h-2 ${item.color}`}
-                  />
+                  <div className="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+                    <div
+                      className={`h-full ${item.color}`}
+                      style={{ width: `${item.value}%` }}
+                    ></div>
+                  </div>
                 </div>
               ))}
             </CardContent>
@@ -107,7 +114,7 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
                   </div>
                 </div>
                 <div className="bg-green-500 p-4 rounded-md">
-                  <div className="text-gray-400">Agree</div>
+                  <div className="text-gray-200">Agree</div>
                   <div className="text-3xl font-bold text-white">
                     {commentStats.agree}
                   </div>
