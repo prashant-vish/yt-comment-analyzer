@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Error404Page from "./components/Error404Page.tsx";
 
 export type DashboardProps = {
   sentimentData: {
@@ -44,6 +45,7 @@ function App() {
             path="/dashboard"
             element={<Dashboard sentimentData={sentimentData} />}
           />
+          <Route path="*" element={<Error404Page />} />
         </Routes>
       </BrowserRouter>
     </>
