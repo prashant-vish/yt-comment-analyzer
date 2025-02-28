@@ -75,7 +75,7 @@ const exportToCSV = (data: any) => {
 };
 
 const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
-  console.log("sentimentData:", sentimentData);
+  // console.log("sentimentData:", sentimentData);
 
   if (!sentimentData) {
     return (
@@ -85,7 +85,7 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
     );
   }
   const analysis = sentimentData.analysis;
-  console.log("Analysis:", analysis);
+  // console.log("Analysis:", analysis);
 
   const commentStats = {
     total: analysis?.commentCount || 0,
@@ -116,7 +116,7 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
   ];
 
   const monthlyDistribution = analysis?.monthlyDistribution || [];
-  console.log("Monthly Distribution:", monthlyDistribution);
+  // console.log("Monthly Distribution:", monthlyDistribution);
 
   const chartData = Object.entries(monthlyDistribution).map(
     ([month, desktop]) => ({
@@ -124,7 +124,7 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
       desktop,
     })
   );
-  console.log("ChartData:", chartData);
+  // console.log("ChartData:", chartData);
 
   const chartConfig = {
     desktop: {
