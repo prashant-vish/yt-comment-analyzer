@@ -16,6 +16,63 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
+const exportToCSV = (data: any) => {
+  // Create CSV header row
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  // Add sentiment distribution data
+  csvContent += "Sentiment Distribution\n";
+  csvContent += "Category,Percentage\n";
+  csvContent += `Agree,${(
+    (data.analysis.sentimentBreakdown.agree / data.analysis.commentCount) *
+    100
+  ).toFixed(2)}\n`;
+  csvContent += `Disagree,${(
+    (data.analysis.sentimentBreakdown.disagree / data.analysis.commentCount) *
+    100
+  ).toFixed(2)}\n`;
+  csvContent += `Neutral,${(
+    (data.analysis.sentimentBreakdown.neutral / data.analysis.commentCount) *
+    100
+  ).toFixed(2)}\n\n`;
+
+  // Add comment statistics
+  csvContent += "Comment Statistics\n";
+  csvContent += "Type,Count\n";
+  csvContent += `Total,${data.analysis.commentCount}\n`;
+  csvContent += `Agree,${data.analysis.sentimentBreakdown.agree}\n`;
+  csvContent += `Disagree,${data.analysis.sentimentBreakdown.disagree}\n`;
+  csvContent += `Neutral,${data.analysis.sentimentBreakdown.neutral}\n\n`;
+
+  // Add monthly distribution
+  csvContent += "Monthly Distribution\n";
+  csvContent += "Month,Comments\n";
+  Object.entries(data.analysis.monthlyDistribution).forEach(
+    ([month, count]) => {
+      csvContent += `${month},${count}\n`;
+    }
+  );
+
+  // Add keywords
+  csvContent += "\nTop Keywords\n";
+  csvContent += "Keyword,Count\n";
+  data.analysis.keywords.forEach((item: any) => {
+    csvContent += `${item.word},${item.count || ""}\n`;
+  });
+
+  // Create download link and trigger click
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute(
+    "download",
+    `sentiment-analysis-${new Date().toISOString().split("T")[0]}.csv`
+  );
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
   console.log("sentimentData:", sentimentData);
 
@@ -78,7 +135,10 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">Analysis Results</h1>
-          <button className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md flex items-center">
+          <button
+            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md flex items-center"
+            onClick={() => exportToCSV(sentimentData)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 mr-2"
