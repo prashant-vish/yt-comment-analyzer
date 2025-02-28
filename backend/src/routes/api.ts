@@ -90,20 +90,20 @@ router.post("/analyze", async (req: Request, res: Response): Promise<any> => {
 
     // 4. Store everything in MongoDB
     // Save each analyzed comment
-    // await Comment.insertMany(
-    //   analyzedComment.map((comment) => ({
-    //     commentId: comment.id,
-    //     videoId,
-    //     text: comment.text,
-    //     authorDisplayName: comment.authorDisplayName,
-    //     publishedAt: comment.publishedAt,
-    //     likeCount: comment.likeCount,
-    //     sentiment: comment.sentiment,
-    //     score: comment.score,
-    //     isReply: comment.isReply || false,
-    //     parentId: comment.parentId || null,
-    //   }))
-    // );
+    await Comment.insertMany(
+      analyzedComment.map((comment) => ({
+        commentId: comment.id,
+        videoId,
+        text: comment.text,
+        authorDisplayName: comment.authorDisplayName,
+        publishedAt: comment.publishedAt,
+        likeCount: comment.likeCount,
+        sentiment: comment.sentiment,
+        score: comment.score,
+        isReply: comment.isReply || false,
+        parentId: comment.parentId || null,
+      }))
+    );
     // Save the analysis
     const savedAnalysis = await Analysis.create({
       videoId,
