@@ -16,13 +16,16 @@ const Home: React.FC<HomePageProps> = ({ setSentimentData }) => {
 
     try {
       // console.log("URL:", url);
-      const response = await axios("http://localhost:3000/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: JSON.stringify({ url }),
-      });
+      const response = await axios(
+        "https://yt-comment-analyzer-2s91.onrender.com/api/analyze",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({ url }),
+        }
+      );
       // console.log("Response:", response);
 
       const data = await response.data;
