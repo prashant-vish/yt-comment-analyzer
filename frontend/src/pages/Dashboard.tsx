@@ -1,7 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import { DashboardProps } from "@/App";
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
   console.log("sentimentData:", sentimentData);
@@ -36,17 +49,29 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
       color: "bg-blue-500",
     },
   ];
-  const monthlyData = [
-    { month: "Jan", count: 120 },
-    { month: "Feb", count: 150 },
-    { month: "Mar", count: 200 },
-    { month: "Apr", count: 180 },
-  ];
+
+  const monthlyDistribution = analysis?.monthlyDistribution || [];
+  console.log("Monthly Distribution:", monthlyDistribution);
+
+  const chartData = Object.entries(monthlyDistribution).map(
+    ([month, desktop]) => ({
+      month,
+      desktop,
+    })
+  );
+  console.log("ChartData:", chartData);
+
+  const chartConfig = {
+    desktop: {
+      label: "Comments",
+      color: "#A855F7",
+    },
+  } satisfies ChartConfig;
 
   const keywords = analysis?.keywords || [];
 
   // Calculate max value for chart scaling
-  const maxMonthlyCount = Math.max(...monthlyData.map((item) => item.count));
+  // const maxMonthlyCount = Math.max(...monthlyData.map((item) => item.count));
 
   return (
     <div className="bg-slate-900 text-slate-50 p-8 min-h-screen">
@@ -142,48 +167,38 @@ const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
                 Monthly Distribution
               </CardTitle>
             </CardHeader>
+            2/2025
             <CardContent>
-              <div className="h-64 relative pt-6">
-                {/* Y-axis labels and grid lines */}
-                <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400">
-                  <div>200</div>
-                  <div>150</div>
-                  <div>100</div>
-                  <div>50</div>
-                  <div>0</div>
-                </div>
-
-                {/* Grid lines */}
-                <div className="absolute left-8 right-0 top-0 h-full flex flex-col justify-between">
-                  <div className="border-t border-slate-700 w-full h-0"></div>
-                  <div className="border-t border-slate-700 w-full h-0"></div>
-                  <div className="border-t border-slate-700 w-full h-0"></div>
-                  <div className="border-t border-slate-700 w-full h-0"></div>
-                  <div className="border-t border-slate-700 w-full h-0"></div>
-                </div>
-
-                {/* Bars */}
-                <div className="absolute left-10 right-4 bottom-6 h-52 flex justify-between items-end">
-                  {monthlyData.map((item) => {
-                    const height = (item.count / maxMonthlyCount) * 100;
-                    return (
-                      <div
-                        key={item.month}
-                        className="flex flex-col items-center"
-                        style={{ width: "18%" }}
-                      >
-                        <div
-                          className="w-full bg-purple-500 rounded-sm"
-                          style={{ height: `${height}%` }}
-                        ></div>
-                        <div className="mt-2 text-sm text-white">
-                          {item.month}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <ChartContainer config={chartConfig}>
+                <BarChart
+                  accessibilityLayer
+                  data={chartData}
+                  margin={{
+                    top: 20,
+                  }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value) => value.slice(0)}
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent hideLabel />}
+                  />
+                  <Bar dataKey="desktop" fill="var(--color-desktop)" radius={0}>
+                    <LabelList
+                      position="top"
+                      offset={12}
+                      className="fill-white "
+                      fontSize={12}
+                    />
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
             </CardContent>
           </Card>
 
