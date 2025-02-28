@@ -17,8 +17,8 @@ app.use(express_1.default.json());
 // Routes
 app.use("/api", api_1.default);
 // In your app.ts file
-app.get('/', (req, res) => {
-    res.send('API is running');
+app.get("/", (req, res) => {
+    res.send("API is running");
 });
 // MongoDB Connection
 mongoose_1.default
