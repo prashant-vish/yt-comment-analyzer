@@ -16,6 +16,11 @@ app.use(express.json());
 // Routes
 app.use("/api", apiRoutes);
 
+// In your app.ts file
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
+
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGODB_URI as string)
