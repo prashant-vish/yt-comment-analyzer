@@ -12,7 +12,7 @@ const Error404Page: React.FC<Error404PageProps> = ({
   customMessage = "Don't directly come this page Go back and put link and come",
   onHomeClick = () => (window.location.href = "/"),
   onBackClick = () => window.history.back(),
-  loadingDuration = 1000, // Default 1.5 seconds of loading
+  loadingDuration = 1000, // Default 1 seconds of loading
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
