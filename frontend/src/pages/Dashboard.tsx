@@ -15,6 +15,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import Error404Page from "@/components/Error404Page";
 
 const exportToCSV = (data: any) => {
   // Create CSV header row
@@ -76,6 +77,13 @@ const exportToCSV = (data: any) => {
 const Dashboard: React.FC<DashboardProps> = ({ sentimentData }) => {
   console.log("sentimentData:", sentimentData);
 
+  if (!sentimentData) {
+    return (
+      <>
+        <Error404Page />
+      </>
+    );
+  }
   const analysis = sentimentData.analysis;
   console.log("Analysis:", analysis);
 
