@@ -5,12 +5,55 @@ import { analyzeAllComments } from "../services/geminiService";
 import { generateInsights } from "../services/insightService";
 import Comment from "../models/comment";
 import Analysis from "../models/analysis";
+import { error } from "console";
 const router = express.Router();
+
+function extractYouTubeVideoId(url: string): string | null {
+  if (!url || typeof url !== "string") return null;
+
+  // Clean the URL first
+  url = url.trim();
+
+  // Regular expression to match various YouTube URL patterns
+  const patterns = [
+    // Standard watch URL with v parameter
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\?\/]+)/,
+
+    // URL with v parameter anywhere in query string
+    /[?&]v=([^&]+)/,
+
+    // Short URL format
+    /youtu\.be\/([^&\?\/]+)/,
+
+    // Embedded URL format
+    /youtube\.com\/embed\/([^&\?\/]+)/,
+
+    // /v/ format
+    /youtube\.com\/v\/([^&\?\/]+)/,
+
+    // Attribution link
+    /youtube\.com\/attribution_link.*?v%3D([^%&]+)/,
+
+    // YouTube shorts
+    /youtube\.com\/shorts\/([^&\?\/]+)/,
+  ];
+
+  // Try each pattern
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      // Return only the videoId part
+      return match[1].split("&")[0];
+    }
+  }
+
+  return null;
+}
 
 router.post("/analyze", async (req: Request, res: Response): Promise<any> => {
   try {
     const { url } = req.body;
-    const videoId = url.split("v=")[1]; // Extract video ID from URL
+    let videoId = extractYouTubeVideoId(url); // Extract video ID from URL
 
     // Check if we already have an analysis for this video
     const existingAnalysis = await Analysis.findOne({ videoId });
@@ -18,6 +61,12 @@ router.post("/analyze", async (req: Request, res: Response): Promise<any> => {
       return res.json({
         message: "Analysis already exists",
         analysis: existingAnalysis,
+      });
+    }
+    if (videoId === null) {
+      return res.status(400).send({
+        message: "Link Desn't have VideoId",
+        error: "Can't Find VideoId",
       });
     }
 
