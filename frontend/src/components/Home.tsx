@@ -82,7 +82,7 @@ const Home: React.FC<HomePageProps> = ({ setSentimentData }) => {
 
           <button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 flex items-center justify-center"
+            className="w-full bg-black hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 flex items-center justify-center"
             disabled={isLoading}
           >
             {isLoading ? (
