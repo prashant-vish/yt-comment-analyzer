@@ -17,7 +17,9 @@ async function makeRequestWithBackoff(
 
   while (true) {
     try {
+
       // Wait before making the request
+
       if (retries > 0) {
         const backoffDelay = initialDelay * Math.pow(2, retries - 1);
         console.log(
@@ -79,6 +81,7 @@ export async function analyzeCommentSentiment(
       .replace(/\}\s*$/, "}"); // Ensure JSON ends properly
 
     // Parse the JSON response safely
+    
     const analysis = JSON.parse(cleanedText);
 
     return {
